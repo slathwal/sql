@@ -120,6 +120,20 @@ ORDER BY vendor_name ASC, market_date ASC;
 /* 1. Write a query that determines how many times each vendor has rented a booth 
 at the farmer’s market by counting the vendor booth assignments per vendor_id. */
 
+-- if we want to know how many times a vendor has rented any booth
+SELECT 
+vendor_id,
+COUNT(*) AS num_times_rented
+FROM vendor_booth_assignments
+GROUP BY vendor_id;
+
+-- if we want how many times a vendor has rented a particular booth
+SELECT 
+vendor_id, 
+booth_number,
+COUNT(*) AS num_times_rented
+FROM vendor_booth_assignments
+GROUP BY vendor_id, booth_number;
 
 
 /* 2. The Farmer’s Market Customer Appreciation Committee wants to give a bumper 
@@ -127,7 +141,19 @@ sticker to everyone who has ever spent more than $2000 at the market. Write a qu
 of customers for them to give stickers to, sorted by last name, then first name. 
 
 HINT: This query requires you to join two tables, use an aggregate function, and use the HAVING keyword. */
+SELECT 
+customer_last_name,
+customer_first_name,
+SUM(quantity*cost_to_customer_per_qty) AS money_spent
 
+FROM customer_purchases AS cp
+INNER JOIN customer as c
+	ON c.customer_id = cp.customer_id
+
+GROUP BY c.customer_id
+HAVING money_spent  >  2000
+
+ORDER BY customer_last_name, customer_first_name;
 
 
 --Temp Table
