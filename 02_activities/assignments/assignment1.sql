@@ -168,6 +168,19 @@ When inserting the new vendor, you need to appropriately align the columns to be
 VALUES(col1,col2,col3,col4,col5) 
 */
 
+-- drop if the table EXISTS - Use when re-running the query
+-- DROP TABLE IF EXISTS temp.new_vendor;
+
+CREATE TABLE temp.new_vendor AS
+SELECT * 
+FROM vendor;
+
+INSERT INTO new_vendor
+VALUES (10, 'Superfood Store', 'Fresh Focused', 'Thomas', 'Rosenthal');
+
+/* to verify if the row has been added successfully */
+-- SELECT * 
+-- FROM new_vendor;
 
 
 -- Date
