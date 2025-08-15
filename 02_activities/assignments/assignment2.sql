@@ -22,7 +22,7 @@ All the other rows will remain the same.) */
 
 SELECT 
 product_name || ', ' || coalesce(product_size,'') || ' (' || coalesce(product_qty_type,'unit') || ')'
-FROM product
+FROM product;
 
 --Windowed Functions
 /* 1. Write a query that selects from the customer_purchases table and numbers each customer’s  
@@ -34,18 +34,54 @@ each new market date for each customer, or select only the unique market dates p
 (without purchase details) and number those visits. 
 HINT: One of these approaches uses ROW_NUMBER() and one uses DENSE_RANK(). */
 
+-- option 1
+SELECT *
+, dense_rank() OVER (PARTITION BY customer_id ORDER BY market_date) as visit_number
+FROM customer_purchases;
 
+-- option 2
+SELECT *
+,row_number() OVER (PARTITION BY customer_id ORDER BY market_date) as visit_number
+FROM (
+	SELECT DISTINCT
+	market_date
+	, customer_id
+	FROM customer_purchases
+);
 
 /* 2. Reverse the numbering of the query from a part so each customer’s most recent visit is labeled 1, 
 then write another query that uses this one as a subquery (or temp table) and filters the results to 
 only the customer’s most recent visit. */
 
+SELECT *
+,row_number() OVER (PARTITION BY customer_id ORDER BY market_date DESC) as visit_number
+FROM (
+	SELECT DISTINCT
+	market_date
+	, customer_id
+	FROM customer_purchases
+);
 
+SELECT *
+FROM
+(
+	SELECT *
+	,row_number() OVER (PARTITION BY customer_id ORDER BY market_date DESC) as visit_number
+	FROM (
+		SELECT DISTINCT
+		market_date
+		, customer_id
+		FROM customer_purchases
+	)
+)
+WHERE visit_number = 1;
 
 /* 3. Using a COUNT() window function, include a value along with each row of the 
 customer_purchases table that indicates how many different times that customer has purchased that product_id. */
 
-
+SELECT *
+, count() OVER (PARTITION BY customer_id, product_id ORDER BY customer_id) as times_purchased
+FROM customer_purchases;
 
 -- String manipulations
 /* 1. Some product names in the product table have descriptions like "Jar" or "Organic". 
