@@ -96,6 +96,9 @@ Remove any trailing or leading whitespaces. Don't just use a case statement for 
 Hint: you might need to use INSTR(product_name,'-') to find the hyphens. INSTR will help split the column. */
 
 
+SELECT *
+, NULLIF(TRIM(substr(product_name, INSTR(product_name,'-')+1)), product_name)as product_description
+FROM product;
 
 
 -- UNION
@@ -138,7 +141,7 @@ UNION
 SELECT 
 market_date
 , total_sales
-,  'lowest_total_sales' as sales_comment 
+,  'lowest_total_sales' 
  FROM (
 	SELECT 
 	market_date
@@ -147,7 +150,6 @@ market_date
 	FROM total_sales_table
 ) x
 WHERE ranked_total_sales = 1;
-
 
 
 /* SECTION 3 */
