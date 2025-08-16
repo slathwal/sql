@@ -109,6 +109,45 @@ HINT: There are a possibly a few ways to do this query, but if you're struggling
 with a UNION binding them. */
 
 
+-- Create a CTE that calculates total sales for each market_date
+WITH  total_sales_table AS (
+	SELECT 
+	market_date
+	, SUM(quantity*cost_to_customer_per_qty) as total_sales
+	FROM customer_purchases
+	GROUP BY market_date
+)
+
+-- query for filtering out the the market_date with the maximum sale
+SELECT
+market_date
+, total_sales
+, 'highest_total_sales' as sales_comment
+ FROM (
+	SELECT 
+	market_date
+	,total_sales
+	, rank() OVER (ORDER BY total_sales DESC ) as ranked_total_sales
+	FROM total_sales_table
+) x
+WHERE ranked_total_sales = 1
+
+UNION 
+
+-- query for filtering out the the market_date with the minimum sale
+SELECT 
+market_date
+, total_sales
+,  'lowest_total_sales' as sales_comment 
+ FROM (
+	SELECT 
+	market_date
+	,total_sales
+	, rank() OVER (ORDER BY total_sales ) as ranked_total_sales -- rank =1 for day with least total_sales
+	FROM total_sales_table
+) x
+WHERE ranked_total_sales = 1;
+
 
 
 /* SECTION 3 */
