@@ -54,7 +54,13 @@ The store wants to keep customer addresses. Propose two architectures for the CU
 **HINT:** search type 1 vs type 2 slowly changing dimensions. 
 
 ```
-Your answer...
+The CUSTOMER_ADDRESS table can be designed in two ways:
+1. If a customer's address changes, the old address can be updated and overwritten.
+2. If a customer's address changes, a new row for the customer can be added, with a column indicating that this is the active row for the customer and the older row with the old address can be marked inactive.
+
+In data warehouses, data that generally remain the same, but can slowly change over time are referred to as Slowly changing dimension (SCD). To manage SCDs such as customer addresses, we may choose architectures that either overwrite older data and do not preserve history or retain history.
+ - In Type 1 SCD, new data overwrites older data and the old values are discarded. In this architecture, when a customer's address changes, we will use an UPDATE statement on the CUSTOMER_ADDRESS table and over-write the older address with the new address. This architecture will not preserve any history and we will not know if a customer's address has changed and how many times it has changes.
+ 2. In Type 2 SCD, when we want to change a customer's address, we will add a new row to the CUSTOMER_ADDRESS table. The table will also have a column that indicates the the newly added row contains the current active address. This column will also indicate that the older row for the customer with the older address is inactive. In this architecture, we will be able to monitor the address change history of each customer, if needed, as every address change will add a new row to the table.
 ```
 
 ***
