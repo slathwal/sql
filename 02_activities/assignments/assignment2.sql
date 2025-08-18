@@ -286,7 +286,7 @@ SET current_quantity =
 );
 
 -- check the updated product_units table
--- SELECT * FROM product_units
+SELECT * FROM product_units
 
 
 
